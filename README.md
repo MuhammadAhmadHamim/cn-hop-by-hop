@@ -34,6 +34,7 @@ Not archived. Every lab that lands gets added the week it's understood, not the 
 cn-hop-by-hop/
 │
 └── 🕸️ 01_topologies/
+       ├── bus.pkt
        └── point_to_point.pkt
 ```
 
@@ -44,6 +45,7 @@ cn-hop-by-hop/
 | Topology | What It Shows |
 |---|---|
 | **Point-to-Point** | A direct link between exactly two devices |
+| **Bus** | Devices sharing a single backbone |
 
 > *Every later lab sits on top of one of these shapes.*
 
@@ -60,7 +62,7 @@ C:\> tracert cn-hop-by-hop
 
 Tracing the course, one hop at a time:
 
-  1   01_topologies             point-to-point
+  1   01_topologies              bus · point-to-point
   2      *        *        *     Request timed out.
 
 Trace not complete.
