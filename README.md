@@ -76,6 +76,7 @@ Hop 2 is the next lab. It hasn't answered yet.
 
 ```bash
 git clone https://github.com/MuhammadAhmadHamim/cn-hop-by-hop.git
+cd cn-hop-by-hop
 ```
 
 - **`.pkt` files** open in [Cisco Packet Tracer](https://www.netacad.com/courses/packet-tracer) (built with version `9.0.1.858`). A free Cisco Networking Academy account is needed to download it.
