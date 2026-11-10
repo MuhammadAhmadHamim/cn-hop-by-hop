@@ -35,6 +35,7 @@ cn-hop-by-hop/
 │
 └── 🕸️ 01_topologies/
        ├── bus.pkt
+       ├── distributed_bus.pkt
        ├── hybrid.pkt
        ├── point_to_point.pkt
        └── star.pkt
@@ -48,6 +49,7 @@ cn-hop-by-hop/
 |---|---|
 | **Point-to-Point** | A direct link between exactly two devices |
 | **Bus** | Devices sharing a single backbone |
+| **Distributed Bus** | Multiple bus segments joined together |
 | **Star** | Every device connected to one central switch |
 | **Hybrid** | A mix of the above in one network |
 
