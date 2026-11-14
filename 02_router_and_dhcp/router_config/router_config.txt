@@ -1,0 +1,155 @@
+================================================================================
+ LAB          : Router Configuration - Connecting Four Networks
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : router_config.pkt
+ DATE         : 14 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Connect four separate networks through a single router. Each network has its
+ own switch and its own IP block. The router was expanded with a 4-port switch
+ module (<MODULE_MODEL>), and each switch plugs into a different module port.
+
+ HOW IT WORKS
+ ------------
+ - The module ports are Layer 2 SWITCHPORTS, not routed interfaces, so an IP
+   address cannot be placed on them directly.
+ - Instead, each module port is placed in its own VLAN (one VLAN per network).
+   The router then gets a VLAN interface (SVI) for each VLAN, and THAT
+   interface holds the IP address.
+ - The VLAN interface acts as the DEFAULT GATEWAY for the network behind its
+   port. Because each port sits in a different VLAN, the four networks stay
+   separate until the router connects them.
+ - Every VLAN interface needs an IP address + subnet mask and "no shutdown".
+   A VLAN interface only comes up once at least one port in its VLAN is up
+   (here: the cable to the switch).
+ - Once the VLAN interfaces are up, the router automatically knows all four
+   networks because they are directly connected. No routing protocol or
+   static route is needed.
+ - Every PC uses the VLAN interface IP of ITS OWN network as its default
+   gateway.
+
+ DEVICES
+ -------
+   Router    : PT8200   hostname: Router
+   Module    : NIM-ES2-4 installed in GigabitEthernet0/1  (4 switchports)
+   Switches  : 2960-24TT x4 (Switch0, Switch1,
+                                  Switch2, Switch3)
+   PCs       : 8 total
+
+ ADDRESSING PLAN
+ ---------------
+   Network   VLAN ID    Network ID        Subnet Mask         Router Interface IP (Gateway)
+   -------   ---------- ----------------  ------------------  -----------------------------
+   NET1      VLAN 10    192.168.1.0        255.255.255.0      192.168.1.1
+   NET2      VLAN 20    192.168.2.0        255.255.255.0      192.168.2.1
+   NET3      VLAN 30    192.168.3.0        255.255.255.0      192.168.3.1
+   NET4      VLAN 40    192.168.4.0        255.255.255.0      192.168.4.1
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   Module Port                  VLAN            Switch (port)                 Network
+   ---------------------------  -----------     ----------------------------  -------
+   GigabitEthernet0/1/0   <-->  VLAN 10         Switch0 (FastEthernet3)         NET1
+   GigabitEthernet0/1/1   <-->  VLAN 20         Switch1 (FastEthernet3)         NET2
+   GigabitEthernet0/1/2   <-->  VLAN 30         Switch2 (FastEthernet3)         NET3
+   GigabitEthernet0/1/3   <-->  VLAN 40         Switch3 (FastEthernet3)         NET4
+
+ PC CONFIGURATION (static)
+ -------------------------
+ NET1 - behind Switch0
+   PC0   IP: 192.168.1.2   Mask: 255.255.255.0   Gateway: 192.168.1.1   Port: FastEthernet0/1
+   PC1   IP: 192.168.1.3   Mask: 255.255.255.0   Gateway: 192.168.1.1   Port: FastEthernet0/2
+
+ NET2 - behind Switch1
+   PC2   IP: 192.168.2.2   Mask: 255.255.255.0   Gateway: 192.168.2.1   Port: FastEthernet0/1
+   PC3   IP: 192.168.2.3   Mask: 255.255.255.0   Gateway: 192.168.2.1   Port: FastEthernet0/2
+
+ NET3 - behind Switch2
+   PC4   IP: 192.168.3.2   Mask: 255.255.255.0   Gateway: 192.168.3.1   Port: FastEthernet0/1
+   PC5   IP: 192.168.3.3   Mask: 255.255.255.0   Gateway: 192.168.3.1   Port: FastEthernet0/2
+
+ NET4 - behind Switch3
+   PC6   IP: 192.168.4.2   Mask: 255.255.255.0   Gateway: 192.168.4.1   Port: FastEthernet0/1
+   PC7   IP: 192.168.4.3   Mask: 255.255.255.0   Gateway: 192.168.4.1   Port: FastEthernet0/2
+
+ Switches need no configuration here: they work as-is at Layer 2.
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+configure t
+hostname Router
+
+! ---- NET1 ----
+interface Vlan 10
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Gig0/1/0
+ switchport mode access
+ switchport access Vlan 10
+ no shutdown
+ exit
+
+! ---- NET2 ----
+interface Vlan 20
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Gig0/1/1
+ switchport mode access
+ switchport access Vlan 20
+ no shutdown
+ exit
+
+! ---- NET3 ----
+interface Vlan 30
+ ip address 192.168.3.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Gig0/1/2
+ switchport mode access
+ switchport access Vlan 30
+ no shutdown
+ exit
+
+! ---- NET4 ----
+interface Vlan 40
+ ip address 192.168.3.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Gig0/1/3
+ switchport mode access
+ switchport access Vlan 40
+ no shutdown
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show ip interface brief      -> all four interfaces: up / up
+   show ip route                -> four "C" (connected) routes, one per network
+   show running-config          -> the full configuration
+
+ From the PCs (ping):
+   PC0 -> PC1  (same network, works through the switch)
+   PC0 -> PC2   (NET1 to NET2, works through the router)
+   PC0 -> PC4   (NET1 to NET3)
+   PC0 -> PC6   (NET1 to NET4)
+
+================================================================================
