@@ -33,14 +33,23 @@ Not archived. Every lab that lands gets added the week it's understood, not the 
 ```
 cn-hop-by-hop/
 │
-└── 🕸️ 01_topologies/
-       ├── bus.pkt
-       ├── distributed_bus.pkt
-       ├── distributed_star.pkt
-       ├── hybrid.pkt
-       ├── point_to_point.pkt
-       └── star.pkt
+├── 🕸️ 01_topologies/
+|       ├── bus.pkt
+|       ├── distributed_bus.pkt
+|       ├── distributed_star.pkt
+|       ├── hybrid.pkt
+|       ├── point_to_point.pkt
+|       └── star.pkt
+│
+└── 📡 02_router_and_dhcp/
+        └── router_config/
+            ├── router_config.pkt
+            └── router_config.txt
 ```
+
+> Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
+
+## ◈ Chapter Breakdown
 
 <details>
 <summary><b>🕸️ 01 — Topologies &nbsp;|&nbsp; Six Ways to Wire the Same Idea</b></summary>
@@ -59,6 +68,16 @@ cn-hop-by-hop/
 
 </details>
 
+<details>
+<summary><b>📡 02 — Router &amp; DHCP &nbsp;|&nbsp; Networks That Configure Themselves</b></summary>
+<br/>
+
+| Concept | What It Shows |
+|---|---|
+| **Router Configuration** | Interface setup, addressing, and connecting networks |
+
+</details>
+
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
 
 ---
@@ -71,12 +90,19 @@ C:\> tracert cn-hop-by-hop
 Tracing the course, one hop at a time:
 
   1   01_topologies              star · bus · point-to-point · hybrid
-  2      *        *        *     Request timed out.
+  2   02_router_and_dhcp         router configuration
+  3      *        *        *     Request timed out.
 
 Trace not complete.
 ```
 
-Hop 2 is the next lab. It hasn't answered yet.
+Hop 3 is the next lab. It hasn't answered yet.
+
+---
+
+## ◈ What the Configs Look Like
+
+Where a lab involved CLI work, a `.txt` sits next to the `.pkt` with a header listing the devices and the commands entered on each. A `.pkt` only stores the final state, so the `.txt` records how it got there.
 
 ---
 
@@ -88,6 +114,9 @@ cd cn-hop-by-hop
 ```
 
 - **`.pkt` files** open in [Cisco Packet Tracer](https://www.netacad.com/courses/packet-tracer) (built with version `9.0.1.858`). A free Cisco Networking Academy account is needed to download it.
+- **`.txt` files** are plain text and readable right here on GitHub.
+
+Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config`) to see the finished setup. The matching `.txt` shows the commands that built it.
 
 ---
 
