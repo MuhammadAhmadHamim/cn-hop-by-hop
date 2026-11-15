@@ -42,9 +42,13 @@ cn-hop-by-hop/
 |       └── star.pkt
 │
 └── 📡 02_router_and_dhcp/
-        └── router_config/
-            ├── router_config.pkt
-            └── router_config.txt
+        ├── router_config/
+        |   ├── router_config.pkt
+        |   └── router_config.txt
+        |
+        └── dhcp_config/
+            ├── dhcp_config.pkt
+            └── dhcp_config.txt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
@@ -75,7 +79,9 @@ cn-hop-by-hop/
 | Concept | What It Shows |
 |---|---|
 | **Router Configuration** | Interface setup, addressing, and connecting networks |
+| **DHCP** | A router handing out addresses automatically instead of static assignment |
 
+> *The first time the network does the addressing instead of me.*
 </details>
 
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
@@ -90,7 +96,7 @@ C:\> tracert cn-hop-by-hop
 Tracing the course, one hop at a time:
 
   1   01_topologies              star · bus · point-to-point · hybrid
-  2   02_router_and_dhcp         router configuration
+  2   02_router_and_dhcp         router configuration · DHCP
   3      *        *        *     Request timed out.
 
 Trace not complete.
@@ -102,7 +108,14 @@ Hop 3 is the next lab. It hasn't answered yet.
 
 ## ◈ What the Configs Look Like
 
-Where a lab involved CLI work, a `.txt` sits next to the `.pkt` with a header listing the devices and the commands entered on each. A `.pkt` only stores the final state, so the `.txt` records how it got there.
+Where a lab involved CLI work, a `.txt` sits next to the `.pkt` with a header listing the devices and the commands entered on each. A `.pkt` only stores the final state, so the `.txt` records how it got there. Example from the DHCP lab:
+
+```
+Router(config)# ip dhcp excluded-address 192.168.1.1
+Router(config)# ip dhcp pool Vlan1
+Router(dhcp-config)# network 192.168.1.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.1.1
+```
 
 ---
 
@@ -127,6 +140,7 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/Tool-Cisco_Packet_Tracer-3dd1f0?style=flat-square&logo=cisco&logoColor=white)
 ![](https://img.shields.io/badge/CLI-Cisco_IOS-5f7083?style=flat-square&logo=cisco&logoColor=white)
 ![](https://img.shields.io/badge/Design-Network_Topologies-3dd1f0?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Services-DHCP-3dd1f0?style=flat-square&logoColor=white)
 
 </div>
 
