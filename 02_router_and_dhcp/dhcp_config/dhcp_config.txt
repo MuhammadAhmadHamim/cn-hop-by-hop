@@ -1,0 +1,127 @@
+================================================================================
+ LAB          : DHCP Configuration - Two DHCP Pools on One Router
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : dhcp_config.pkt
+ DATE         : 15 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Configure a router as a DHCP server for two separate networks, so PCs receive
+ their IP address, subnet mask, and default gateway automatically instead of
+ being set by hand.
+
+ HOW IT WORKS
+ ------------
+ - The router uses its two default (routed) interfaces. Each interface connects
+   to a switch and holds the gateway IP of the network behind it.
+ - A DHCP POOL defines what the router hands out for one network: the network
+   ID + subnet mask, the default gateway, and optionally a DNS server.
+ - One pool is created per network. The router decides which pool to use from
+   the interface the request arrived on: a request coming in on
+   Gig0/0/0 is answered from POOL1, and one coming in on
+   Gig0/0/1 is answered from POOL2.
+ - EXCLUDED ADDRESSES are reserved addresses the router will never lease
+   (the gateway itself, and any addresses kept for static devices). They
+   must be excluded BEFORE the pool starts handing out addresses.
+ - PCs are set to "DHCP" in their IP configuration. They then send a broadcast
+   request, the router offers an address from the matching pool, and the PC
+   accepts it.
+
+ DEVICES
+ -------
+   Router    : ISR4331   hostname: Router
+   Switches  : 2960-24TT x2 (Switch0, Switch1)
+   PCs       : 6 total (all DHCP clients)
+
+ ADDRESSING PLAN
+ ---------------
+   Network  Network ID      Subnet Mask      Gateway (router interface)     Excluded Range
+   -------  ------------    -------------    ---------------------------    ---------------------------
+   NET1     192.168.1.0     255.255.255.0    192.168.1.1                    192.168.1.1
+   NET2     192.168.2.0     255.255.255.0    192.168.2.1                    192.168.2.1
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   Gig0/0/0  <-->  Switch0 (FastEthernet0/4)   NET1
+   Gig0/0/1  <-->  Switch1 (FastEthernet0/4)   NET2
+
+ PC CONFIGURATION (DHCP clients)
+ -------------------------------
+ NET1 - behind Switch0
+   PC0   Mode: DHCP   Port: FastEthernet0/1   Received IP: 192.168.1.2
+   PC1   Mode: DHCP   Port: FastEthernet0/2   Received IP: 192.168.1.3
+   PC2   Mode: DHCP   Port: FastEthernet0/3   Received IP: 192.168.1.4
+
+ NET2 - behind Switch1
+   PC3   Mode: DHCP   Port: FastEthernet0/1   Received IP: 192.168.2.2
+   PC4   Mode: DHCP   Port: FastEthernet0/2   Received IP: 192.168.2.3
+   PC5   Mode: DHCP   Port: FastEthernet0/3   Received IP: 192.168.2.4
+
+ No static IP is set on any PC. "Received IP" is filled after the PCs get their
+ leases. The two switches need no configuration.
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+config t
+
+! ---- Step 1: address the two routed interfaces (these are the gateways) ----
+interface Gig0/0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Gig0/0/1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ exit
+
+! ---- Step 2: exclude addresses that must never be leased ----
+ip dhcp excluded-address 192.168.1.1 
+ip dhcp excluded-address 192.168.2.1
+
+! ---- Step 3: create one DHCP pool per network ----
+ip dhcp pool Vlan1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ exit
+
+ip dhcp pool Vlan2
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.1.1
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ PC STEPS
+================================================================================
+
+ On each PC: Desktop > IP Configuration > select "DHCP".
+ The PC should show an address from its network's pool, along with the
+ subnet mask and default gateway.
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show ip interface brief      -> both interfaces: up / up
+   show ip dhcp pool            -> both pools with their ranges and leases in use
+   show ip dhcp binding         -> which IP was leased to which PC (by MAC)
+   show running-config          -> the full configuration
+
+ On the PCs:
+   ipconfig /all                -> IP, mask, gateway, and DNS received by DHCP
+
+ From the PCs (ping):
+   PC0 -> PC1   (same network)
+   PC0 -> PC3   (NET1 to NET2, through the router)
+
+================================================================================
