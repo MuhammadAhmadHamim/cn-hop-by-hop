@@ -41,17 +41,24 @@ cn-hop-by-hop/
 |       ├── point_to_point.pkt
 |       └── star.pkt
 │
-└── 📡 02_router_and_dhcp/
-        ├── router_config/
-        |   ├── router_config.pkt
-        |   └── router_config.txt
-        |
-        └── dhcp_config/
-            ├── dhcp_config.pkt
-            └── dhcp_config.txt
+├── 📡 02_router_and_dhcp/
+|       ├── router_config/
+|       |   ├── router_config.pkt
+|       |   └── router_config.txt
+|       |
+|       └── dhcp_config/
+|           ├── dhcp_config.pkt
+|           └── dhcp_config.txt
+|
+└── 🧮 03_ip_addressing/
+        └── subnetting/
+            ├── subnetting.pkt
+            └── subnetting.txt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
+
+---
 
 ## ◈ Chapter Breakdown
 
@@ -84,6 +91,16 @@ cn-hop-by-hop/
 > *The first time the network does the addressing instead of me.*
 </details>
 
+<details>
+<summary><b>🧮 03 — IP Addressing &nbsp;|&nbsp; Carving Up the Address Space</b></summary>
+<br/>
+
+| Concept | What It Shows |
+|---|---|
+| **Subnetting** | Splitting a network using one fixed subnet mask, implemented on a router |
+
+</details>
+
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
 
 ---
@@ -97,12 +114,13 @@ Tracing the course, one hop at a time:
 
   1   01_topologies              star · bus · point-to-point · hybrid
   2   02_router_and_dhcp         router configuration · DHCP
-  3      *        *        *     Request timed out.
+  3   03_ip_addressing           subnetting
+  4      *        *        *     Request timed out.
 
 Trace not complete.
 ```
 
-Hop 3 is the next lab. It hasn't answered yet.
+Hop 4 is the next lab. It hasn't answered yet.
 
 ---
 
@@ -141,6 +159,7 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/CLI-Cisco_IOS-5f7083?style=flat-square&logo=cisco&logoColor=white)
 ![](https://img.shields.io/badge/Design-Network_Topologies-3dd1f0?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Services-DHCP-3dd1f0?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Addressing-Subnetting-e6eef3?style=flat-square&logoColor=white)
 
 </div>
 
