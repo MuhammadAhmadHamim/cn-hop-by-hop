@@ -1,0 +1,169 @@
+================================================================================
+ LAB          : Subnetting - Four Subnets, Same Subnet Mask (60 Hosts Each)
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : subnetting.pkt
+ DATE         : 16 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Split one address block into four subnets, each able to hold 60 hosts, using
+ the SAME subnet mask for all of them. Connect the four subnets through one
+ router, with two PCs placed in each subnet.
+
+ SUBNET CALCULATION
+ ------------------
+ Hosts needed per subnet        : 60
+ Add network + broadcast address: 60 + 2 = 62 addresses
+ Host bits needed               : 2^6 = 64 (>= 62)   -> 6 host bits
+                                  (2^5 = 32 is too small)
+ Prefix length                  : 32 - 6 = /26
+ Subnet mask                    : 255.255.255.192
+ Block size (addresses/subnet)  : 64
+ Usable hosts per subnet        : 64 - 2 = 62  (requirement of 60 is met)
+ Subnets needed                 : 4
+ Bits borrowed from a /24 base  : 2  (2^2 = 4 subnets)
+ Base block used                : 192.168.1.0/24
+
+ The four subnets step by 64 in the last octet:
+   NET1 starts at .0     NET2 starts at .64
+   NET3 starts at .128   NET4 starts at .192
+   (valid when the base block is a /24)
+
+ HOW IT WORKS
+ ------------
+ - One router joins the four subnets. The router's four module ports are
+   Layer 2 SWITCHPORTS, so each port is placed in its own VLAN and the IP
+   address goes on the matching VLAN interface (SVI).
+ - Each VLAN interface takes an address from ITS subnet and acts as the
+   DEFAULT GATEWAY for that subnet.
+ - All four subnets share the same mask (255.255.255.192). Only the network
+   portion of the address differs between them.
+ - Every PC uses the VLAN interface IP of its own subnet as its default gateway.
+ - Only two PCs are used per subnet to demonstrate the setup. Each subnet is
+   sized to hold up to 62.
+
+ DEVICES
+ -------
+   Router    : 1841   hostname: Router
+   Module    : HWIC-4ESW in FastEthernet0/1  (4 switchports)
+   Switches  : 2950-24 x4 (Switch0, Switch1,
+                                  Switch2, Switch3)
+   PCs       : 8 total (2 per subnet)
+
+ ADDRESSING PLAN (mask is the same for every subnet: 255.255.255.192 / /26)
+ -------------------------------------------------------------------------
+   Subnet  VLAN ID      Network ID    First Usable     Last Usable    Broadcast       Gateway
+   ------  -----------  ----------    --------------   -------------  ------------    --------------
+   NET1    Vlan1        192.168.1.0   192.168.1.2      192.168.1.62   192.168.1.63    192.168.1.1
+   NET2    Vlan2        192.168.1.64  192.168.1.66     192.168.1.126  192.168.1.127   192.168.1.65
+   NET3    Vlan3        192.168.1.128 192.168.1.130    192.168.1.190  192.168.1.191   192.168.1.129
+   NET4    Vlan4        192.168.1.192 192.168.1.194    192.168.1.254  192.168.1.255   192.168.1.193
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   Module Port             VLAN         Switch (port)                    Subnet
+   ----------------------  -----------  -------------------------------  ------
+   FastEthernet0/1/0 <-->  Vlan1        Switch0 (FastEthernet0/3)        NET1
+   FastEthernet0/1/1 <-->  Vlan2        Switch1 (FastEthernet0/3)        NET2
+   FastEthernet0/1/2 <-->  Vlan3        Switch2 (FastEthernet0/3)        NET3
+   FastEthernet0/1/3 <-->  Vlan4        Switch3 (FastEthernet0/3)        NET4
+
+ PC CONFIGURATION (static, mask 255.255.255.192 on all)
+ ------------------------------------------------------
+ NET1 - behind Switch0
+   PC0   IP: 192.168.1.2   Mask: 255.255.255.192   Gateway: 192.168.1.1   Port: Fa0/2
+   PC1   IP: 192.168.1.3   Mask: 255.255.255.192   Gateway: 192.168.1.1   Port: Fa0/1
+
+ NET2 - behind Switch1
+   PC2   IP: 192.168.1.66   Mask: 255.255.255.192   Gateway: 192.168.1.65   Port: Fa0/1
+   PC3   IP: 192.168.1.67   Mask: 255.255.255.192   Gateway: 192.168.1.65   Port: Fa0/2
+
+ NET3 - behind Switch2
+   PC4   IP: 192.168.1.130   Mask: 255.255.255.192   Gateway: 192.168.1.129   Port: Fa0/1
+   PC5   IP: 192.168.1.131   Mask: 255.255.255.192   Gateway: 192.168.1.129   Port: Fa0/2
+
+ NET4 - behind Switch3
+   PC6   IP: 192.168.1.194   Mask: 255.255.255.192   Gateway: 192.168.1.193   Port: Fa0/2
+   PC7   IP: 192.168.1.195   Mask: 255.255.255.192   Gateway: 192.168.1.193   Port: Fa0/1
+
+ The four external switches need no configuration.
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+configure t
+hostname Router
+
+! ---- NET1 ----
+interface Vlan 1
+ ip address 192.168.1.1 255.255.255.192
+ no shutdown
+ exit
+
+interface Fa0/1/0
+ switchport mode access
+ switchport access Vlan 1
+ no shutdown
+ exit
+
+! ---- NET2 ----
+interface Vlan 2
+ ip address 192.168.1.65 255.255.255.192
+ no shutdown
+ exit
+
+interface Fa0/1/1
+ switchport mode access
+ switchport access Vlan 2
+ no shutdown
+ exit
+
+! ---- NET3 ----
+interface Vlan 3
+ ip address 192.168.1.129 255.255.255.192
+ no shutdown
+ exit
+
+interface Fa0/1/2
+ switchport mode access
+ switchport access Vlan 3
+ no shutdown
+ exit
+
+! ---- NET4 ----
+interface Vlan 4
+ ip address 192.168.1.193 255.255.255.192
+ no shutdown
+ exit
+
+interface Fa0/1/3
+ switchport mode access
+ switchport access Vlan 4
+ no shutdown
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show vlan-switch brief       -> four VLANs, each with its module port
+   show ip interface brief      -> four Vlan interfaces: up / up
+   show ip route                -> four "C" routes, each shown as /26
+   show running-config          -> the full configuration
+
+ From the PCs (ping):
+   PC0 -> PC1   (same subnet, through the switch)
+   PC0 -> PC2   (NET1 to NET2, through the router)
+   PC0 -> PC4   (NET1 to NET3)
+   PC0 -> PC6   (NET1 to NET4)
+
+================================================================================
