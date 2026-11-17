@@ -51,9 +51,13 @@ cn-hop-by-hop/
 |           └── dhcp_config.txt
 |
 └── 🧮 03_ip_addressing/
-        └── subnetting/
-            ├── subnetting.pkt
-            └── subnetting.txt
+        ├── subnetting/
+        |   ├── subnetting.pkt
+        |   └── subnetting.txt
+        |
+        └── vlsm/   
+            ├── vlsm.pkt
+            └── vlsm.txt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
@@ -76,7 +80,6 @@ cn-hop-by-hop/
 | **Hybrid** | A mix of the above in one network |
 
 > *Every later lab sits on top of one of these shapes.*
-
 </details>
 
 <details>
@@ -98,7 +101,9 @@ cn-hop-by-hop/
 | Concept | What It Shows |
 |---|---|
 | **Subnetting** | Splitting a network using one fixed subnet mask, implemented on a router |
+| **VLSM** | Variable-length subnet masks to fit each subnet to its real size, implemented on a router |
 
+> *Same network, two philosophies: one mask for everyone, or a mask sized to fit each subnet.*
 </details>
 
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
@@ -114,7 +119,7 @@ Tracing the course, one hop at a time:
 
   1   01_topologies              star · bus · point-to-point · hybrid
   2   02_router_and_dhcp         router configuration · DHCP
-  3   03_ip_addressing           subnetting
+  3   03_ip_addressing           subnetting · VLSM
   4      *        *        *     Request timed out.
 
 Trace not complete.
@@ -160,6 +165,7 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/Design-Network_Topologies-3dd1f0?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Services-DHCP-3dd1f0?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Addressing-Subnetting-e6eef3?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Addressing-VLSM-5f7083?style=flat-square&logoColor=white)
 
 </div>
 
