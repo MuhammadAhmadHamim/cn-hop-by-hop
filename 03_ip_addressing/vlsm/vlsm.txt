@@ -1,0 +1,180 @@
+================================================================================
+ LAB          : VLSM - Variable Length Subnet Masks on a Router
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : vlsm.pkt
+ DATE         : 17 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Divide the block 192.168.1.0/24 into four subnets of DIFFERENT sizes, giving
+ each subnet a mask that fits its needs, and connect them through one router.
+
+ WHY VLSM
+ --------
+ With a single fixed mask, every subnet is the same size, so small subnets
+ waste addresses. VLSM allows each subnet its own mask:
+   - Subnet 1 is large, so it gets a short prefix (/25, 126 hosts).
+   - Subnet 4 only needs a single end device, so it gets a /30 (2 hosts).
+ Subnets are allocated from largest to smallest, one after another, so they
+ never overlap and no address is wasted between them.
+
+ HOW IT WORKS
+ ------------
+ - The router's four module ports are Layer 2 SWITCHPORTS. Each port is placed
+   in its own VLAN, and the IP address goes on the matching VLAN interface
+   (SVI), which acts as the DEFAULT GATEWAY for that subnet.
+ - Unlike the previous subnetting lab, each VLAN interface here uses a
+   DIFFERENT subnet mask.
+ - The router knows all four subnets automatically because they are directly
+   connected. No routing protocol or static route is needed.
+ - Every PC uses the gateway of its own subnet and that subnet's mask.
+ - Subnet 4 (/30) has exactly 2 usable addresses: one for the router
+   interface (gateway) and one for the laptop. Nothing is left over.
+
+ DEVICES
+ -------
+   Router    : 1841   hostname: Router
+   Module    : HWIC-4ESW in FastEthernet0/1  (4 switchports)
+   Switches  : 2950-24 x4 (Switch0, Switch1,
+                                  Switch2, Switch3)
+   End devices: 2 PCs in Subnet 1, 2 PCs in Subnet 2, 2 PCs in Subnet 3,
+                1 Laptop in Subnet 4
+
+ SUBNET SIZES
+ ------------
+   Subnet  Prefix  Host bits  Block size  Usable hosts
+   ------  ------  ---------  ----------  ------------
+   1       /25     7          128         126
+   2       /27     5          32          30
+   3       /28     4          16          14
+   4       /30     2          4           2
+
+   Address space used: 128 + 32 + 16 + 4 = 180 of 256 addresses.
+   Unused (free for future subnets): 192.168.1.180 - 192.168.1.255
+
+ ADDRESSING PLAN
+ ---------------
+   Subnet  VLAN ID      Network ID      Subnet Mask      First Usable   Last Usable    Broadcast      Gateway (VLAN interface IP)
+   ------  -----------  --------------  ---------------  -------------  -------------  -------------  ---------------------------
+   1       Vlan1        192.168.1.0     255.255.255.128  192.168.1.1    192.168.1.126  192.168.1.127  192.168.1.1
+   2       Vlan2        192.168.1.128   255.255.255.224  192.168.1.129  192.168.1.158  192.168.1.159  192.168.1.129
+   3       Vlan3        192.168.1.160   255.255.255.240  192.168.1.161  192.168.1.174  192.168.1.175  192.168.1.161
+   4       Vlan4        192.168.1.176   255.255.255.252  192.168.1.177  192.168.1.178  192.168.1.179  192.168.1.177
+
+   Gateway choice: the first usable address of each subnet.
+   Assignable range for end devices (gateway excluded):
+     Subnet 1: 192.168.1.2   - 192.168.1.126
+     Subnet 2: 192.168.1.130 - 192.168.1.158
+     Subnet 3: 192.168.1.162 - 192.168.1.174
+     Subnet 4: 192.168.1.178 only
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   Module Port             VLAN         Switch (port)                     Subnet
+   ----------------------  -----------  --------------------------------  ------
+   FastEthernet0/1/0 <-->  Vlan1        Switch0 (FastEthernet0/3)         1
+   FastEthernet0/1/1 <-->  Vlan2        Switch1 (FastEthernet0/3)         2
+   FastEthernet0/1/2 <-->  Vlan3        Switch2 (FastEthernet0/3)         3
+   FastEthernet0/1/3 <-->  Vlan4        Switch3 (FastEthernet0/2)         4
+
+ END DEVICE CONFIGURATION (static)
+ ---------------------------------
+ Subnet 1 - behind Switch0   (mask 255.255.255.128)
+   PC0   IP: 192.168.1.2   Mask: 255.255.255.128   Gateway: 192.168.1.1   Port: FastEthernet0/1
+   PC1   IP: 192.168.1.3   Mask: 255.255.255.128   Gateway: 192.168.1.1   Port: FastEthernet0/2
+
+ Subnet 2 - behind Switch1   (mask 255.255.255.224)
+   PC2   IP: 192.168.1.130   Mask: 255.255.255.224   Gateway: 192.168.1.129   Port: FastEthernet0/1
+   PC3   IP: 192.168.1.131   Mask: 255.255.255.224   Gateway: 192.168.1.129   Port: FastEthernet0/2
+
+ Subnet 3 - behind Switch2   (mask 255.255.255.240)
+   PC4   IP: 192.169.1.162   Mask: 255.255.255.240   Gateway: 192.168.1.161   Port: FastEthernet0/1
+   PC5   IP: 192.169.1.163   Mask: 255.255.255.240   Gateway: 192.168.1.161   Port: FastEthernet0/2
+
+ Subnet 4 - behind Switch3   (mask 255.255.255.252)
+   Laptop0  IP: 192.168.1.178   Mask: 255.255.255.252   Gateway: 192.168.1.177   Port: FastEthernet0/1
+
+ The four external switches need no configuration.
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+configure t
+hostname Router
+
+! ---- NET1 ----
+interface Vlan 1
+ ip address 192.168.1.1 255.255.255.128
+ no shutdown
+ exit
+
+interface Fa0/1/0
+ switchport mode access
+ switchport access Vlan 1
+ no shutdown
+ exit
+
+! ---- NET2 ----
+interface Vlan 2
+ ip address 192.168.1.129 255.255.255.224
+ no shutdown
+ exit
+
+interface Fa0/1/1
+ switchport mode access
+ switchport access Vlan 2
+ no shutdown
+ exit
+
+! ---- NET3 ----
+interface Vlan 3
+ ip address 192.168.1.161 255.255.255.240
+ no shutdown
+ exit
+
+interface Fa0/1/2
+ switchport mode access
+ switchport access Vlan 3
+ no shutdown
+ exit
+
+! ---- NET4 ----
+interface Vlan 4
+ ip address 192.168.1.177 255.255.255.252
+ no shutdown
+ exit
+
+interface Fa0/1/3
+ switchport mode access
+ switchport access Vlan 4
+ no shutdown
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show vlan-switch brief       -> four VLANs, each with its module port
+   show ip interface brief      -> four Vlan interfaces: up / up
+   show ip route                -> four "C" routes with different prefix lengths
+                                   (/25, /27, /28, /30), under the heading
+                                   "192.168.1.0/24 is variably subnetted,
+                                   4 subnets, 4 masks"
+   show running-config          -> the full configuration
+
+ From the end devices (ping):
+   PC0  -> PC1      (same subnet)
+   PC0  -> PC2      (Subnet 1 to Subnet 2, through the router)
+   PC0  -> PC4      (Subnet 1 to Subnet 3)
+   PC0  -> Laptop0  (Subnet 1 to Subnet 4)
+
+================================================================================
