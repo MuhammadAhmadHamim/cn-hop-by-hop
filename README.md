@@ -68,9 +68,13 @@ cn-hop-by-hop/
         |   ├── http_conditional_get.pcapng
         |   └── http_conditional_get_answers.txt
         |
-        └── http_long_document/
-            ├── http_long_document.pcapng
-            └── http_long_document_answers.txt
+        ├── http_long_document/
+        |   ├── http_long_document.pcapng
+        |   └── http_long_document_answers.txt
+        |
+        └── http_embedded_objects/
+            ├── http_embedded_objects.pcapng
+            └── http_embedded_objects_answers.txt
 
 ```
 
