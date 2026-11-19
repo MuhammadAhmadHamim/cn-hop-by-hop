@@ -4,7 +4,7 @@
 
 <br/>
 
-![Tool](https://img.shields.io/badge/Tool-Packet%20Tracer-3dd1f0?style=for-the-badge&labelColor=161d25)
+![Tools](https://img.shields.io/badge/Tools-Packet%20Tracer%20%7C%20Wireshark-3dd1f0?style=for-the-badge&labelColor=161d25)
 ![Focus](https://img.shields.io/badge/Focus-Computer%20Networks-e6eef3?style=for-the-badge&labelColor=161d25)
 ![Semester](https://img.shields.io/badge/Semester-4%20%C2%B7%20Fall%202026-5f7083?style=for-the-badge&labelColor=161d25)
 ![Status](https://img.shields.io/badge/Status-🔨%20Actively%20Growing-3dd1f0?style=for-the-badge&labelColor=161d25)
@@ -50,14 +50,32 @@ cn-hop-by-hop/
 |           ├── dhcp_config.pkt
 |           └── dhcp_config.txt
 |
-└── 🧮 03_ip_addressing/
-        ├── subnetting/
-        |   ├── subnetting.pkt
-        |   └── subnetting.txt
+├── 🧮 03_ip_addressing/
+|       ├── subnetting/
+|       |   ├── subnetting.pkt
+|       |   └── subnetting.txt
+|       |
+|       └── vlsm/   
+|           ├── vlsm.pkt
+|           └── vlsm.txt
+|
+└── 🔬 04_packet_analysis/
+        ├── http_basic_get/
+        |   ├── http_basic_get.pcapng
+        |   └── http_basic_get_answers.txt
         |
-        └── vlsm/   
-            ├── vlsm.pkt
-            └── vlsm.txt
+        ├── http_conditional_get/
+        |   ├── http_conditional_get.pcapng
+        |   └── http_conditional_get_answers.txt
+        |
+        ├── http_long_document/
+        |   ├── http_long_document.pcapng
+        |   └── http_long_document_answers.txt
+        |
+        └── http_embedded_objects/
+            ├── http_embedded_objects.pcapng
+            └── http_embedded_objects_answers.txt
+
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
@@ -106,6 +124,17 @@ cn-hop-by-hop/
 > *Same network, two philosophies: one mask for everyone, or a mask sized to fit each subnet.*
 </details>
 
+<details>
+<summary><b>🔬 04 — Packet Analysis &nbsp;|&nbsp; Where the Diagram Becomes Bytes</b></summary>
+<br/>
+
+| Concept | What It Shows |
+|---|---|
+| **Header Reading** | Capturing traffic in Wireshark and reading the basic protocol headers |
+
+> *The one lab where the network stops being a drawing and starts being data.*
+</details>
+
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
 
 ---
@@ -120,12 +149,13 @@ Tracing the course, one hop at a time:
   1   01_topologies              star · bus · point-to-point · hybrid
   2   02_router_and_dhcp         router configuration · DHCP
   3   03_ip_addressing           subnetting · VLSM
-  4      *        *        *     Request timed out.
+  4   04_packet_analysis         Wireshark header reading
+  5      *        *        *     Request timed out.
 
 Trace not complete.
 ```
 
-Hop 4 is the next lab. It hasn't answered yet.
+Hop 5 is the next lab. It hasn't answered yet.
 
 ---
 
@@ -150,6 +180,7 @@ cd cn-hop-by-hop
 ```
 
 - **`.pkt` files** open in [Cisco Packet Tracer](https://www.netacad.com/courses/packet-tracer) (built with version `9.0.1.858`). A free Cisco Networking Academy account is needed to download it.
+- **`.pcapng` files** open in [Wireshark](https://www.wireshark.org/).
 - **`.txt` files** are plain text and readable right here on GitHub.
 
 Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config`) to see the finished setup. The matching `.txt` shows the commands that built it.
@@ -166,6 +197,8 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/Services-DHCP-3dd1f0?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Addressing-Subnetting-e6eef3?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Addressing-VLSM-5f7083?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Tool-Wireshark-e6eef3?style=flat-square&logo=wireshark&logoColor=white)
+![](https://img.shields.io/badge/Analysis-Packet_Headers-5f7083?style=flat-square&logoColor=white)
 
 </div>
 
