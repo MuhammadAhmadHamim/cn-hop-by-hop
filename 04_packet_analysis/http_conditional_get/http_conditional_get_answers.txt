@@ -1,0 +1,77 @@
+================================================================================
+ LAB          : Packet Analysis - HTTP Conditional GET/Response Interaction
+ COURSE       : Computer Networks
+ TOOL         : Wireshark 4.6.9
+ CAPTURE FILE : http_conditional_get.pcapng
+ ORIGINAL NAME: http-wireshark-trace2-1.pcapng
+ DATE         : 19 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ CAPTURE SUMMARY
+ ---------------
+   What it shows      : The same short HTML file requested twice. The first
+                        request has an empty browser cache, the second is
+                        a refresh with the file cached.
+   Protocols present  : Ethernet, IPv4, TCP, HTTP
+   Total packets      : 4
+   Source             : Provided with the lab (Wireshark HTTP lab, Activity 2)
+
+ HOW TO READ THIS FILE
+ ---------------------
+ Each answer lists the packet number it came from, the header and field where
+ the value was read, and the display filter used. Open the capture, apply the
+ filter, click the packet, and expand the header to check any answer.
+
+================================================================================
+ ANSWERS
+================================================================================
+
+ Q7. Is there an IF-MODIFIED-SINCE line in the first GET?
+ ----------------------------------------------------------------------
+   Answer        : No. The browser cache was empty, so there was no earlier
+                   copy of the file to ask about.
+   Packet No.    : 56
+   Header        : HTTP
+   Field         : (absent) If-Modified-Since
+   Display filter: http.request
+
+ Q8. Did the server return the file contents? How can you tell?
+ ----------------------------------------------------------------------
+   Answer        : Yes. The status code is 200 OK, which means the file was
+                   found and sent. The response also carries the HTML in its
+                   body.
+   Packet No.    : 58
+   Header        : HTTP
+   Field         : Status Code, Line-based text data
+   Display filter: http.response
+
+ Q9. IF-MODIFIED-SINCE in the second GET? What follows it?
+ ----------------------------------------------------------------------
+   Answer        : Yes. It is followed by Sat, 30 Jan 2021 06:59:02 GMT, the
+                   time the file was last modified.
+   Packet No.    : 556
+   Header        : HTTP
+   Field         : If-Modified-Since
+   Display filter: http.request
+   Notes         : Should match Last-Modified in packet <FIRST_RESPONSE_PACKET>.
+
+ Q10. Status code and phrase of the second response; was the file returned?
+ ----------------------------------------------------------------------
+   Answer        : 304 Not Modified. No, the server did not return the file
+                   contents. The file had not changed since the first
+                   request, so the server told the browser to reuse its
+                   cached copy, which saves bandwidth.
+   Packet No.    : 558
+   Header        : HTTP
+   Field         : Status Code, Response Phrase
+   Display filter: http.response
+
+================================================================================
+ FILTERS USED IN THIS CAPTURE
+================================================================================
+   http           -> shows only the HTTP messages
+   http.request   -> shows only the two GET requests
+   http.response  -> shows only the two server responses
+
+================================================================================
