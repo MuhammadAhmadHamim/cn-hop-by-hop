@@ -1,0 +1,87 @@
+================================================================================
+ LAB          : Packet Analysis - Basic HTTP GET/Response Interaction
+ COURSE       : Computer Networks
+ TOOL         : Wireshark 4.6.9
+ CAPTURE FILE : http_basic_get.pcapng
+ ORIGINAL NAME: http-wireshark-trace1-1.pcapng
+ DATE         : 19 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ CAPTURE SUMMARY
+ ---------------
+   What it shows      : A browser fetching one short HTML file (no embedded
+                        objects) from gaia.cs.umass.edu
+   Protocols present  : Ethernet, IPv4, TCP, HTTP
+   Total packets      : 2
+   Source             : Provided with the lab (Wireshark HTTP lab, Activity 1)
+
+ HOW TO READ THIS FILE
+ ---------------------
+ Each answer lists the packet number it came from, the header and field where
+ the value was read, and the display filter used. Open the capture, apply the
+ filter, click the packet, and expand the header to check any answer.
+
+================================================================================
+ ANSWERS
+================================================================================
+
+ Q1. HTTP version of browser and server
+ ----------------------------------------------------------------------
+   Answer        : Both the browser and the server run HTTP/1.1.
+   Packet No.    : 93 GET /wireshark-labs/HTTP-wireshark-file1.html (request), 95	HTTP/1.1 200 OK (text/html) (response)
+   Header        : HTTP
+   Field         : Request Version (in the GET line) / Response Version
+                   (in the status line)
+   Display filter: http
+
+ Q2. Languages the browser accepts
+ ----------------------------------------------------------------------
+   Answer        : English (US) and generic English: en-US,en;q=0.9
+   Packet No.    : 93
+   Header        : HTTP
+   Field         : Accept-Language
+   Display filter: http.request
+
+ Q3. IP address of the computer and of gaia.cs.umass.edu
+ ----------------------------------------------------------------------
+   Answer        : Computer: 192.168.6.77
+                   Server (gaia.cs.umass.edu): 128.119.245.12
+   Packet No.    : 93
+   Header        : Internet Protocol Version 4
+   Field         : Source Address (computer), Destination Address (server)
+   Display filter: http.request
+   Notes         : In the response packet the two addresses swap places.
+
+ Q4. Status code returned by the server
+ ----------------------------------------------------------------------
+   Answer        : 200
+   Packet No.    : 95
+   Header        : HTTP
+   Field         : Status Code
+   Display filter: http.response
+
+ Q5. When the HTML file was last modified at the server
+ ----------------------------------------------------------------------
+   Answer        : Tue, 28 Oct 2025 05:59:01 GMT
+   Packet No.    : 95
+   Header        : HTTP
+   Field         : Last-Modified
+   Display filter: http.response
+
+ Q6. Bytes of content returned to the browser
+ ----------------------------------------------------------------------
+   Answer        : 128 bytes
+   Packet No.    : 95
+   Header        : HTTP
+   Field         : Content-Length
+   Display filter: http.response
+
+================================================================================
+ FILTERS USED IN THIS CAPTURE
+================================================================================
+   http           -> shows only the HTTP messages
+   http.request   -> shows only the GET request
+   http.response  -> shows only the server response
+
+================================================================================
