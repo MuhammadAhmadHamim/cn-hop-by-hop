@@ -1,0 +1,62 @@
+================================================================================
+ LAB          : Packet Analysis - HTML Documents with Embedded Objects
+ COURSE       : Computer Networks
+ TOOL         : Wireshark 9.4.6
+ CAPTURE FILE : http_embedded_objects.pcapng
+ ORIGINAL NAME: http-wireshark-trace4-1.pcapng
+ DATE         : 19 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ CAPTURE SUMMARY
+ ---------------
+   What it shows      : A browser fetching an HTML page that embeds two images
+                        held on two different web servers
+   Protocols present  : Ethernet, IPv4, TCP, HTTP
+   Total packets      : 8
+   Source             : Provided with the lab (Wireshark HTTP lab, Activity 4)
+
+ HOW TO READ THIS FILE
+ ---------------------
+ Each answer lists the packet number it came from, the header and field where
+ the value was read, and the display filter used. Open the capture, apply the
+ filter, click the packet, and expand the header to check any answer.
+
+================================================================================
+ ANSWERS
+================================================================================
+
+ Q15. Number of GET requests, and the addresses they were sent to
+ ----------------------------------------------------------------------
+   Answer        : 3 GET requests were sent:
+                   1. Base HTML file   -> gaia.cs.umass.edu  
+                   2. First image      -> gaia.cs.umass.edu
+                   3. Second image     -> kurose.cslash.net
+   Packet No.    : 95, 99, 118
+   Header        : Internet Protocol Version 4 / HTTP
+   Field         : Destination Address / Request URI, Host
+   Display filter: http.request
+
+ Q16. Were the two images downloaded serially or in parallel?
+ ----------------------------------------------------------------------
+   Answer        : In parallel. The GET for the second image (packet
+                   99) was sent before the response to the
+                   first image had finished arriving (last packet of that
+                   response: 95). The two transfers also ran
+                   over separate TCP connections (client ports 55023 and
+                   55023) to two different servers.
+   Header        : Transmission Control Protocol / HTTP
+   Field         : Source/Destination Port, Time
+   Display filter: http.request || http.response
+   Notes         : Compare packet order or the Time column. A serial download
+                   would send the second GET only after the first response
+                   was complete.
+
+================================================================================
+ FILTERS USED IN THIS CAPTURE
+================================================================================
+   http                         -> shows only the HTTP messages
+   http.request                 -> shows only the three GET requests
+   http.request || http.response -> shows requests and responses in order
+
+================================================================================
