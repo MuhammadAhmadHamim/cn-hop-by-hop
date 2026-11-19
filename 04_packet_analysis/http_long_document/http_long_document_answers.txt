@@ -1,0 +1,75 @@
+================================================================================
+ LAB          : Packet Analysis - Retrieving Long HTTP Documents
+ COURSE       : Computer Networks
+ TOOL         : Wireshark 9.4.6
+ CAPTURE FILE : http_long_document.pcapng
+ ORIGINAL NAME: http-wireshark-trace3-1.pcapng
+ DATE         : 19 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ CAPTURE SUMMARY
+ ---------------
+   What it shows      : A browser fetching a long HTML file (the US Bill of
+                        Rights, about 4500 bytes) that TCP has to split
+                        across several segments
+   Protocols present  : Ethernet, IPv4, TCP, HTTP
+   Total packets      : 2
+   Source             : Provided with the lab (Wireshark HTTP lab, Activity 3)
+
+ HOW TO READ THIS FILE
+ ---------------------
+ Each answer lists the packet number it came from, the header and field where
+ the value was read, and the display filter used. Open the capture, apply the
+ filter, click the packet, and expand the header to check any answer.
+
+================================================================================
+ ANSWERS
+================================================================================
+
+ Q11. Number of GET requests; packet containing the Bill of Rights GET
+ ----------------------------------------------------------------------
+   Answer        : One GET request was sent. It is in packet 24.
+   Packet No.    : 24
+   Header        : HTTP
+   Field         : Request Method / Request URI
+   Display filter: http.request
+
+ Q12. Packet containing the status code and phrase of the response
+ ----------------------------------------------------------------------
+   Answer        : Packet 32
+   Packet No.    : 32
+   Header        : HTTP
+   Field         : Response Code / Status line
+   Display filter: http.response
+   Notes         : The earlier response segments show only "TCP segment of
+                   a reassembled PDU". The status line appears once the
+                   last segment completes the message.
+
+ Q13. Status code and phrase in the response
+ ----------------------------------------------------------------------
+   Answer        : HTTP/1.1 200 OK
+   Packet No.    : 32
+   Header        : HTTP
+   Field         : Status Code, Response Phrase
+   Display filter: http.response
+
+ Q14. Data-containing TCP segments needed for the response
+ ----------------------------------------------------------------------
+   Answer        : 4 data-containing TCP segments
+   Packet No.    : 32 (lists the reassembled segments)
+   Header        : Transmission Control Protocol
+   Field         : [Reassembled TCP Segments]
+   Display filter: tcp.reassembled_in == 32   (shows the segments of that message)
+   Notes         : The response is too large for one segment, so TCP splits
+                   it. HTTP itself has no "continuation" message.
+
+================================================================================
+ FILTERS USED IN THIS CAPTURE
+================================================================================
+   http                       -> shows only the HTTP messages
+   http.request               -> shows only the GET request
+   http.response              -> shows only the server response
+   tcp.reassembled_in == 32   -> shows the TCP segments of the reassembled response
+
+================================================================================
