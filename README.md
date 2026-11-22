@@ -78,7 +78,8 @@ cn-hop-by-hop/
 |
 └── 🖥️ 05_application_layer/
         └── web_server/
-            └── web_server.pkt
+            ├── web_server.pkt
+            └── web_server.txt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
