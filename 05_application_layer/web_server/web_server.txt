@@ -1,0 +1,123 @@
+================================================================================
+ LAB          : Application Layer - Web (HTTP) Server
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : web_server.pkt
+ DATE         : 22 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Host a web page on a server with a fixed IP address, and browse to it from
+ PCs on a different network. The PCs get their addresses automatically from
+ DHCP on the router.
+
+ HOW IT WORKS
+ ------------
+ - The router joins two networks through its two default routed interfaces.
+   Each interface is the DEFAULT GATEWAY of the network behind it.
+ - PC side: the router acts as the DHCP server. The PCs are set to DHCP and
+   receive an address, mask, and gateway from the pool.
+ - Server side: the web server has a STATIC address, because clients must
+   always find it at the same IP. No DHCP is needed on this side.
+ - The server runs the HTTP service. A PC's browser sends an HTTP GET to the
+   server's IP, and the server replies with the page (200 OK).
+ - There is no DNS server in this file, so the PCs reach the server by IP
+   address, not by name.
+
+ DEVICES
+ -------
+   Router    : 1841   hostname: Router
+   Switches  : 2950-24 x2 (Switch0 for the PC side,
+                                  Switch1 for the server side)
+   PCs       : 2 (PC0, PC1) - DHCP clients
+   Server    : Server-PT (Web.com) - web server, static IP
+
+ ADDRESSING PLAN
+ ---------------
+   Network        Network ID   Subnet Mask    Gateway (router interface)   Addressing
+   -----------    -----------  -------------  ---------------------------  ----------
+   NET1 (PCs)     192.168.1.0  255.255.255.0  192.168.1.1                  DHCP
+   NET2 (Server)  192.168.2.0  255.255.255.0  192.168.2.1                  Static
+
+   DHCP excluded range (NET1): 192.168.1.1
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   FastEthernet0/0  <-->  Switch0 (FastEthernet0/3)         NET1
+   FastEthernet0/1  <-->  Switch1 (FastEthernet0/4)         NET2
+   PC0              <-->  Switch0 (FastEthernet0/1)
+   PC1              <-->  Switch0 (FastEthernet0/2)
+   Web.com          <--> Switch1  (FastEthernet0/1)
+
+ PC CONFIGURATION (DHCP clients)
+ -------------------------------
+   PC0   Mode: DHCP   Received IP: 192.168.1.2
+   PC1   Mode: DHCP   Received IP: 192.168.1.3
+
+ SERVER CONFIGURATION (static)
+ -----------------------------
+   Desktop > IP Configuration (Static):
+     IP Address      : 192.168.2.2
+     Subnet Mask     : 255.255.255.0
+     Default Gateway : 192.168.2.1
+
+   Services > HTTP:
+     HTTP            : On
+     HTTPS           : On
+     index.html      : <h1>Muhammad Ahmad Hamim</h1>
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+config t
+
+! ---- Step 1: address the two routed interfaces (these are the gateways) ----
+interface Fa0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Fa0/1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ exit
+
+! ---- Step 2: DHCP for the PC side only ----
+ip dhcp excluded-address 192.168.1.1
+
+ip dhcp pool Vlan1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ PC STEPS
+================================================================================
+
+ On each PC: Desktop > IP Configuration > select "DHCP".
+ To test the server: Desktop > Web Browser > enter http://192.168.2.2
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show ip interface brief      -> both interfaces: up / up
+   show ip dhcp binding         -> the three PCs and their leased addresses
+   show running-config          -> the full configuration
+
+ From the PCs:
+   ping 192.168.2.2         -> replies come back through the router
+   Web Browser -> http://192.168.2.2   -> the page from index.html loads
+
+ In Simulation mode (optional): filter on HTTP to watch the GET request
+ travel to the server and the response come back.
+
+================================================================================
