@@ -59,23 +59,26 @@ cn-hop-by-hop/
 |           ├── vlsm.pkt
 |           └── vlsm.txt
 |
-└── 🔬 04_packet_analysis/
-        ├── http_basic_get/
-        |   ├── http_basic_get.pcapng
-        |   └── http_basic_get_answers.txt
-        |
-        ├── http_conditional_get/
-        |   ├── http_conditional_get.pcapng
-        |   └── http_conditional_get_answers.txt
-        |
-        ├── http_long_document/
-        |   ├── http_long_document.pcapng
-        |   └── http_long_document_answers.txt
-        |
-        └── http_embedded_objects/
-            ├── http_embedded_objects.pcapng
-            └── http_embedded_objects_answers.txt
-
+├── 🔬 04_packet_analysis/
+|       ├── http_basic_get/
+|       |   ├── http_basic_get.pcapng
+|       |   └── http_basic_get_answers.txt
+|       |
+|       ├── http_conditional_get/
+|       |   ├── http_conditional_get.pcapng
+|       |   └── http_conditional_get_answers.txt
+|       |
+|       ├── http_long_document/
+|       |   ├── http_long_document.pcapng
+|       |   └── http_long_document_answers.txt
+|       |
+|       └── http_embedded_objects/
+|           ├── http_embedded_objects.pcapng
+|           └── http_embedded_objects_answers.txt
+|
+└── 🖥️ 05_application_layer/
+        └── web_server/
+            └── web_server.pkt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
@@ -135,6 +138,17 @@ cn-hop-by-hop/
 > *The one lab where the network stops being a drawing and starts being data.*
 </details>
 
+<details>
+<summary><b>🖥️ 05 — Application Layer &nbsp;|&nbsp; Everything Underneath Finally Pays Off</b></summary>
+<br/>
+
+| Concept | What It Shows |
+|---|---|
+| **Web Server (HTTP/HTTPS)** | A web server on a fixed IP serving a page to DHCP-configured PCs through a router |
+
+> *Every layer from the earlier labs has a reason to exist here.*
+</details>
+
 **Coming up:** whatever the rest of the course covers. This section gets updated as labs land.
 
 ---
@@ -150,12 +164,13 @@ Tracing the course, one hop at a time:
   2   02_router_and_dhcp         router configuration · DHCP
   3   03_ip_addressing           subnetting · VLSM
   4   04_packet_analysis         Wireshark header reading
-  5      *        *        *     Request timed out.
+  5   05_application_layer       web
+  6      *        *        *     Request timed out.
 
 Trace not complete.
 ```
 
-Hop 5 is the next lab. It hasn't answered yet.
+Hop 6 is the next lab. It hasn't answered yet.
 
 ---
 
@@ -199,6 +214,7 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/Addressing-VLSM-5f7083?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Tool-Wireshark-e6eef3?style=flat-square&logo=wireshark&logoColor=white)
 ![](https://img.shields.io/badge/Analysis-Packet_Headers-5f7083?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Services-Web-e6eef3?style=flat-square&logoColor=white)
 
 </div>
 
