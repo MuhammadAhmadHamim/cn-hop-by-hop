@@ -77,9 +77,12 @@ cn-hop-by-hop/
 |           └── http_embedded_objects_answers.txt
 |
 └── 🖥️ 05_application_layer/
-        └── web_server/
-            ├── web_server.pkt
-            └── web_server.txt
+        ├── web_server/
+        |   ├── web_server.pkt
+        |   └── web_server.txt
+        |
+        └── mail_server/
+            └── mail_server.pkt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
@@ -146,6 +149,7 @@ cn-hop-by-hop/
 | Concept | What It Shows |
 |---|---|
 | **Web Server (HTTP/HTTPS)** | A web server on a fixed IP serving a page to DHCP-configured PCs through a router |
+| **Mail Server (SMTP/POP3)** | A mail server on a fixed IP letting users on DHCP-configured PCs send and receive email |
 
 > *Every layer from the earlier labs has a reason to exist here.*
 </details>
@@ -165,7 +169,7 @@ Tracing the course, one hop at a time:
   2   02_router_and_dhcp         router configuration · DHCP
   3   03_ip_addressing           subnetting · VLSM
   4   04_packet_analysis         Wireshark header reading
-  5   05_application_layer       web
+  5   05_application_layer       web · mail
   6      *        *        *     Request timed out.
 
 Trace not complete.
@@ -216,6 +220,7 @@ Open a `.pkt`, click any router, and check the **CLI** tab (`show running-config
 ![](https://img.shields.io/badge/Tool-Wireshark-e6eef3?style=flat-square&logo=wireshark&logoColor=white)
 ![](https://img.shields.io/badge/Analysis-Packet_Headers-5f7083?style=flat-square&logoColor=white)
 ![](https://img.shields.io/badge/Services-Web-e6eef3?style=flat-square&logoColor=white)
+![](https://img.shields.io/badge/Services-Mail-e6eef3?style=flat-square&logoColor=white)
 
 </div>
 
