@@ -1,0 +1,136 @@
+================================================================================
+ LAB          : Application Layer - Mail (SMTP / POP3) Server
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : mail_server.pkt
+ DATE         : 23 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Run a mail server with a fixed IP address and exchange emails between users
+ on PCs in a different network. The PCs get their addresses automatically
+ from DHCP on the router.
+
+ HOW IT WORKS
+ ------------
+ - The router joins two networks through its two default routed interfaces.
+   Each interface is the DEFAULT GATEWAY of the network behind it.
+ - PC side: the router acts as the DHCP server. The PCs are set to DHCP.
+ - Server side: the mail server has a STATIC address so clients can always
+   find it.
+ - The server runs two services:
+     SMTP : accepts mail that a user sends and delivers it to the recipient's
+            mailbox
+     POP3 : lets a user download the mail waiting in their mailbox
+ - Each user has an account on the server. A PC's email client is set up with
+   that account, then sends mail through SMTP and fetches it through POP3.
+ - There is no DNS server in this file, so the email clients point at the
+   mail server by IP address.
+
+ DEVICES
+ -------
+   Router    : 1841   hostname: Router
+   Switches  : 2950-24 x2 (Switch0 for the PC side,
+                                  Switch1 for the server side)
+   PCs       : 2 (PC0, PC1) - DHCP clients
+   Server    : Server-PT (Mail.com) - mail server, static IP
+
+ ADDRESSING PLAN
+ ---------------
+   Network        Network ID   Subnet Mask    Gateway (router interface)   Addressing
+   -----------    -----------  -------------  ---------------------------  ----------
+   NET1 (PCs)     192.168.1.0  255.255.255.0  192.168.1.1                  DHCP
+   NET2 (Server)  192.168.2.0  255.255.255.0  192.168.2.1                  Static
+
+   DHCP excluded range (NET1): 192.168.1.1
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   FastEthernet0/0  <-->  Switch0 (FastEthernet0/3)         NET1
+   FastEthernet0/1  <-->  Switch1 (FastEthernet0/4)         NET2
+   PC0              <-->  Switch0 (FastEthernet0/1)
+   PC1              <-->  Switch0 (FastEthernet0/2)
+   Mail.com         <-->  Switch1 (FastEthernet0/2)
+
+ PC CONFIGURATION (DHCP clients)
+ -------------------------------
+   PC0   Mode: DHCP   Received IP: 192.168.1.2
+   PC1   Mode: DHCP   Received IP: 192.168.1.3
+
+ SERVER CONFIGURATION
+ --------------------
+   Desktop > IP Configuration (Static):
+     IP Address      : 192.168.2.3
+     Subnet Mask     : 255.255.255.0
+     Default Gateway : 192.168.2.1
+
+   Services > EMAIL:
+     SMTP Service    : On
+     POP3 Service    : On
+     Domain Name     : mailserver.com
+     User accounts   :
+       user1  /  123   (used on PC0)
+       user2  /  123   (used on PC1)
+
+ EMAIL CLIENT SETUP (on each PC: Desktop > Email > Configure Mail)
+ -----------------------------------------------------------------
+   PC0:
+     Your Name            : user1
+     Email Address        : user1@mailserver.com
+     Incoming Mail Server : 192.168.2.3
+     Outgoing Mail Server : 192.168.2.3
+     User Name / Password : user1  /  123
+   PC1 : same fields, with the second user's account
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+config t
+
+! ---- Step 1: address the two routed interfaces (these are the gateways) ----
+interface Fa0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Fa0/1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ exit
+
+! ---- Step 2: DHCP for the PC side only ----
+ip dhcp excluded-address 192.168.1.1
+
+ip dhcp pool Vlan1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show ip interface brief      -> both interfaces: up / up
+   show ip dhcp binding         -> the three PCs and their leased addresses
+   show running-config          -> the full configuration
+
+ From the PCs:
+   ping 192.168.2.3        -> replies come back through the router
+
+ Mail test:
+   1. On PC0 : Desktop > Email > Compose
+        To      : user2@mailserver.com
+        Subject : Test
+        Body    : Hello        then Send
+   2. On PC1: Desktop > Email > Receive
+        The message from PC0 should appear in the inbox.
+
+================================================================================
