@@ -86,7 +86,8 @@ cn-hop-by-hop/
         |   └── mail_server.txt
         |
         └── dns_server/
-            └── dns_server.pkt
+            ├── dns_server.pkt
+            └── dns_server.txt
 ```
 
 > Folders appear as the labs happen. Names above are the plan. A concept only gets its own subfolder once a second lab needs it.
