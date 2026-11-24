@@ -1,0 +1,121 @@
+================================================================================
+ LAB          : Application Layer - DNS Server
+ COURSE       : Computer Networks
+ TOOL         : Cisco Packet Tracer 9.0.1.858
+ FILE         : dns_server.pkt
+ DATE         : 24 November, 2026
+ AUTHOR       : Muhammad Ahmad Hamim
+================================================================================
+
+ OBJECTIVE
+ ---------
+ Run a DNS server with a fixed IP address that turns names into IP addresses
+ for PCs on a different network. The PCs get their addresses, and the DNS
+ server's address, automatically from DHCP on the router.
+
+ HOW IT WORKS
+ ------------
+ - The router joins two networks through its two default routed interfaces.
+   Each interface is the DEFAULT GATEWAY of the network behind it.
+ - PC side: the router acts as the DHCP server. Besides the address, mask,
+   and gateway, the DHCP pool also hands out the DNS SERVER ADDRESS
+   (the "dns-server" line), so PCs know where to send name lookups.
+ - Server side: the DNS server has a STATIC address so clients can always
+   find it.
+ - The DNS server holds a table of records. An "A record" maps a name to an
+   IPv4 address. When a PC looks up a name, it asks the DNS server and gets
+   back the matching IP.
+
+ DEVICES
+ -------
+   Router    : 1841   hostname: Router
+   Switches  : 2950-24 x2 (Switch0 for the PC side,
+                                  Switch1 for the server side)
+   PCs       : 2 (PC0, PC1) - DHCP clients
+   Server    : Server-PT (DNS) - DNS server, static IP
+
+ ADDRESSING PLAN
+ ---------------
+   Network      Network ID   Subnet Mask   Gateway (router interface)   Addressing
+   -----------  -----------  ------------  ---------------------------  ----------
+   NET1 (PCs)     192.168.1.0  255.255.255.0  192.168.1.1                  DHCP
+   NET2 (Server)  192.168.2.0  255.255.255.0  192.168.2.1                  Static
+
+   DHCP excluded range (NET1): 192.168.1.1
+   DNS server address handed out by DHCP: 192.168.2.4
+
+ PHYSICAL CONNECTIONS
+ --------------------
+   FastEthernet0/0  <-->  Switch0 (FastEthernet0/3)         NET1
+   FastEthernet0/1  <-->  Switch1 (FastEthernet0/2)         NET2
+   PC0              <-->  Switch0 (FastEthernet0/1)
+   PC1              <-->  Switch0 (FastEthernet0/2)
+   DNS              <-->  Switch1 (FastEthernet0/1)
+
+ PC CONFIGURATION (DHCP clients)
+ -------------------------------
+   PC0   Mode: DHCP   Received IP: 192.168.1.2   DNS: 192.168.2.4
+   PC1   Mode: DHCP   Received IP: 192.168.1.3   DNS: 192.168.2.4
+
+ SERVER CONFIGURATION (static)
+ -----------------------------
+   Desktop > IP Configuration (Static):
+     IP Address      : 192.168.2.4
+     Subnet Mask     : 255.255.255.0
+     Default Gateway : 192.168.2.1
+
+   Services > DNS:
+     DNS Service     : On
+     Records (Type: A Record):
+       Name                    Address
+       ----------------------  ----------------------
+* You can add custom names and addresses according to need.
+
+================================================================================
+ ROUTER CLI - Router
+================================================================================
+
+enable
+config t
+
+! ---- Step 1: address the two routed interfaces (these are the gateways) ----
+interface Fa0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+
+interface Fa0/1
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ exit
+
+! ---- Step 2: DHCP for the PC side, handing out the DNS server too ----
+ip dhcp excluded-address 192.168.1.1
+
+ip dhcp pool Vlan1
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 192.168.2.4
+ exit
+
+end
+copy running-config startup-config
+
+================================================================================
+ VERIFICATION
+================================================================================
+
+ On the router:
+   show ip interface brief      -> both interfaces: up / up
+   show ip dhcp binding         -> the three PCs and their leased addresses
+   show running-config          -> the full configuration
+
+ On the PCs:
+   ipconfig /all                -> shows the DNS server received from DHCP
+
+ DNS tests (PC Desktop > Command Prompt):
+   nslookup <DOMAIN_NAME_SET>     -> returns <RECORD_ADDRESS_SET>
+   ping <DOMAIN_NAME_SET>         -> the name resolves, then the ping goes to
+                                   that address
+
+================================================================================
